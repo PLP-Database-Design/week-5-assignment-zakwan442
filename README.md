@@ -76,6 +76,24 @@ Create a ```GET``` endpoint that retrieves all patients and displays their:
 - ```date_of_birth```
 
 <br>
+from flask import Flask, jsonify
+from your_database_module import db, Patient  # Make sure to import your database setup and models
+
+app = Flask(__name__)
+
+@app.route('/patients', methods=['GET'])
+def get_all_patients():
+    patients = Patient.query.all()  # Query all patients from the database
+    result = []
+    for patient in patients:
+        result.append({
+            'patient_id': patient.patient_id,
+            'first_name': patient.first_name,
+            'last_name': patient.last_name,
+            'date_of_birth': patient.date_of_birth.strftime('%Y-%m-%d')  # Formatting date
+        })
+    return jsonify(result)
+
 
 ## 2. Retrieve all providers
 Create a ```GET``` endpoint that displays all providers with their:
@@ -84,14 +102,51 @@ Create a ```GET``` endpoint that displays all providers with their:
 - ```provider_specialty```
 
 <br>
+@app.route('/providers', methods=['GET'])
+def get_all_providers():
+    providers = Provider.query.all()  # Query all providers from the database
+    result = []
+    for provider in providers:
+        result.append({
+            'first_name': provider.first_name,
+            'last_name': provider.last_name,
+            'provider_specialty': provider.provider_specialty
+        })
+    return jsonify(result)
+
 
 ## 3. Filter patients by First Name
 Create a ```GET``` endpoint that retrieves all patients by their first name
 
 <br>
+@app.route('/patients/first_name/<string:first_name>', methods=['GET'])
+def get_patients_by_first_name(first_name):
+    patients = Patient.query.filter_by(first_name=first_name).all()  # Filter by first name
+    result = []
+    for patient in patients:
+        result.append({
+            'patient_id': patient.patient_id,
+            'first_name': patient.first_name,
+            'last_name': patient.last_name,
+            'date_of_birth': patient.date_of_birth.strftime('%Y-%m-%d')
+        })
+    return jsonify(result)
+
 
 ## 4. Retrieve all providers by their specialty
 Create a ```GET``` endpoint that retrieves all providers by their specialty
+
+@app.route('/providers/specialty/<string:specialty>', methods=['GET'])
+def get_providers_by_specialty(specialty):
+    providers = Provider.query.filter_by(provider_specialty=specialty).all()  # Filter by specialty
+    result = []
+    for provider in providers:
+        result.append({
+            'first_name': provider.first_name,
+            'last_name': provider.last_name,
+            'provider_specialty': provider.provider_specialty
+        })
+    return jsonify(result)
 
 <br>
 
